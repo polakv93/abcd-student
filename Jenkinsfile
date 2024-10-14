@@ -17,26 +17,11 @@ pipeline {
                 sh 'mkdir -p results'
             }
         }
-        stage('DAST') {
+        stage('osv scanner') {
             steps {
                 sh '''
-                    docker run --name juice-shop -d --rm -p 3000:3000 bkimminich/juice-shop
-                    sleep 10
+                    osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json
                 '''
-                sh '''
-                    docker run --name zap -v /mnt/c/Repos/abcDevSecOps/abcd-student/.zap:/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable \
-                    bash -c "ls /zap/wrk; zap.sh -cmd -addonupdate; zap.sh -cmd -addoninstall communityScripts -addoninstall pscanrulesAlpha -addoninstall pscanrulesBeta -autorun /zap/wrk/passive.yaml" || true
-                '''
-            }
-            post {
-                always {
-                    sh '''
-                        docker cp zap:/zap/wrk/reports/zap_html_report.html ${WORKSPACE}/results/zap_html_report.html
-                        docker cp zap:/zap/wrk/reports/zap_xml_report.xml ${WORKSPACE}/results/zap_xml_report.xml
-                        docker stop juice-shop zap
-                        docker rm zap
-                    '''
-                }
             }
         }
     }
@@ -45,10 +30,10 @@ pipeline {
             echo "archiveArtifacts"
             archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
             echo "sending reports to DefectDojo"
-            defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
-                    productName: 'Juice Shop', 
-                    scanType: 'ZAP Scan', 
-                    engagementName: 'pawel.polakiewicz@fabrity.pl')
+            // defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
+            //         productName: 'Juice Shop', 
+            //         scanType: 'OSV Scan', 
+            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
