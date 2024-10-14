@@ -28,27 +28,27 @@ pipeline {
                     bash -c "zap.sh -cmd -addonupdate; zap.sh -cmd -addoninstall communityScripts -addoninstall pscanrulesAlpha -addoninstall pscanrulesBeta -autorun /zap/wrk/passive.yaml" || true
                 '''
             }
+            post {
+                always {
+                    sh '''
+                        docker cp zap:/zap/wrk/reports/zap_html_report.html ${WORKSPACE}/results/zap_html_report.html
+                        docker cp zap:/zap/wrk/reports/zap_xml_report.xml ${WORKSPACE}/results/zap_xml_report.xml
+                        docker stop juice-shop zap
+                        docker rm zap
+                    '''
+                }
+            }
         }
         post {
             always {
-                sh '''
-                    docker cp zap:/zap/wrk/reports/zap_html_report.html ${WORKSPACE}/results/zap_html_report.html
-                    docker cp zap:/zap/wrk/reports/zap_xml_report.xml ${WORKSPACE}/results/zap_xml_report.xml
-                    docker stop juice-shop zap
-                    docker rm zap
-                '''
+                echo "archiveArtifacts"
+                archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
+                echo "sending reports to DefectDojo"
+                // defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
+                //         productName: 'Juice Shop', 
+                //         scanType: 'ZAP Scan', 
+                //         engagementName: 'pawel.polakiewicz@fabrity.pl')
             }
-        }
-    }
-    post {
-        always {
-            echo "archiveArtifacts"
-            archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
-            echo "sending reports to DefectDojo"
-            // defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
-            //         productName: 'Juice Shop', 
-            //         scanType: 'ZAP Scan', 
-            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
