@@ -24,7 +24,7 @@ pipeline {
                     sleep 10
                 '''
                 sh '''
-                    docker run --name zap -v /c/Repos/abcDevSecOps/abcd-student/.zap:/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable \
+                    docker run --name zap -t ghcr.io/zaproxy/zaproxy:stable \
                     bash -c "zap.sh -cmd -addonupdate; zap.sh -cmd -addoninstall communityScripts -addoninstall pscanrulesAlpha -addoninstall pscanrulesBeta -autorun /zap/wrk/passive.yaml" || true
                 '''
             }
