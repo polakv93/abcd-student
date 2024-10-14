@@ -30,10 +30,10 @@ pipeline {
             echo "archiveArtifacts"
             archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
             echo "sending reports to DefectDojo"
-            // defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
-            //         productName: 'Juice Shop', 
-            //         scanType: 'OSV Scan', 
-            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
+            defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
+                    productName: 'Juice Shop', 
+                    scanType: 'OSV Scan', 
+                    engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
