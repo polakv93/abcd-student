@@ -30,11 +30,11 @@ pipeline {
         always {
             echo "archiveArtifacts"
             archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
-            // echo "sending reports to DefectDojo"
-            // defectDojoPublisher(artifact: 'results/trufflehog.json', 
-            //         productName: 'Juice Shop', 
-            //         scanType: 'Trufflehog Scan', 
-            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
+            echo "sending reports to DefectDojo"
+            defectDojoPublisher(artifact: 'results/trufflehog.json', 
+                    productName: 'Juice Shop', 
+                    scanType: 'Trufflehog Scan', 
+                    engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
