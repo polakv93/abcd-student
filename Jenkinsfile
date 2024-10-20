@@ -20,7 +20,7 @@ pipeline {
         stage('trufflehog') {
             steps {
                 sh '''
-                    trufflehog git file://. --since-commit main --only-verified --json results/trufflehog.json
+                    trufflehog git file://. --since-commit main --only-verified
                 '''
             }
         }
