@@ -17,10 +17,10 @@ pipeline {
                 sh 'mkdir -p results'
             }
         }
-        stage('osv scanner') {
+        stage('trufflehog') {
             steps {
                 sh '''
-                    osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json || true
+                    trufflehog git file://. --since-commit main --only-verified --json results/trufflehog.json
                 '''
             }
         }
@@ -29,11 +29,11 @@ pipeline {
         always {
             echo "archiveArtifacts"
             archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
-            echo "sending reports to DefectDojo"
-            defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
-                    productName: 'Juice Shop', 
-                    scanType: 'OSV Scan', 
-                    engagementName: 'pawel.polakiewicz@fabrity.pl')
+            // echo "sending reports to DefectDojo"
+            // defectDojoPublisher(artifact: 'results/trufflehog.json', 
+            //         productName: 'Juice Shop', 
+            //         scanType: 'Trufflehog Scan', 
+            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
