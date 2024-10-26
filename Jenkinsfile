@@ -31,11 +31,11 @@ pipeline {
         always {
             echo "archiveArtifacts"
             archiveArtifacts artifacts: 'results/**/*', fingerprint: true, allowEmptyArchive: true
-            // echo "sending reports to DefectDojo"
-            // defectDojoPublisher(artifact: 'results/semgrep.json', 
-            //         productName: 'Juice Shop', 
-            //         scanType: 'Semgrep JSON Report', 
-            //         engagementName: 'pawel.polakiewicz@fabrity.pl')
+            echo "sending reports to DefectDojo"
+            defectDojoPublisher(artifact: 'results/semgrep.json', 
+                    productName: 'Juice Shop', 
+                    scanType: 'Semgrep JSON Report', 
+                    engagementName: 'pawel.polakiewicz@fabrity.pl')
         }
     }
 }
