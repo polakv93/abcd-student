@@ -12,6 +12,7 @@ pipeline {
                 }
             }
         }
+        
         stage('Prepare') {
             steps {
                 sh 'mkdir -p results'
@@ -20,7 +21,7 @@ pipeline {
         stage('Semgrep') {
             steps {
                 sh '''
-                    semgrep scan --config auto . --json results/semgrep.json
+                    semgrep scan --config auto . --json --output results/semgrep.json
                     cat results/semgrep.json
                 '''
             }
