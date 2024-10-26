@@ -20,7 +20,8 @@ pipeline {
         stage('Semgrep') {
             steps {
                 sh '''
-                    semgrep scan --config auto . 
+                    semgrep scan --config auto . --json results/semgrep.json
+                    cat results/semgrep.json
                 '''
             }
         }
